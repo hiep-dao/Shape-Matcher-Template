@@ -1,6 +1,5 @@
 import React from 'react';
 import { Shape } from '../types';
-import './Cell.css';
 import styled from 'styled-components'
 
 interface CellProps {
@@ -33,12 +32,17 @@ const Triangle = styled.div`
   height: 0;
   border-left: 50px solid transparent;
   border-right: 50px solid transparent;
-  border-bottom: 100px solid ${({ color }: {color: string}) => color};
+  border-bottom: 100px solid ${({ color }: { color: string }) => color};
+  @media only screen and (max-width: 554px) {
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 70px solid ${({ color }: { color: string }) => color};
+  }
 `;
 
 // wrapper
 const FaceDown = styled.div`
-  background: red;
+  background: white;
   cursor: pointer;
 
   max-width: 22%;
@@ -49,8 +53,17 @@ const FaceDown = styled.div`
   border-radius: 5px;
 
   margin: 0px;
-  margin-bottom: 10px;
-  padding: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+
+  @media only screen and (max-width: 1440px) {
+    width: 18%;
+  }
+
+  @media only screen and (max-width: 554px) {
+    width: 14%;
+    height: 97px;;
+  }
 `;
 
 const FaceCard = styled.div`
@@ -69,6 +82,28 @@ const FaceCard = styled.div`
   margin: 0px;
   margin-bottom: 10px;
   padding: 15px;
+
+  @media only screen and (max-width: 1440px) {
+    width: 18%;
+  }
+
+  @media only screen and (max-width: 554px) {
+    width: 14%;
+    height: 97px;
+  }
+`;
+
+const Wrap = styled.div`
+  width: 100%;
+  height: 100%;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Text = styled.p`
+  height: fit-content;
 `;
 
 const RenderShape: React.FC<ShapeProps> = ({ shape, color }): JSX.Element => {
@@ -96,7 +131,11 @@ const Cell: React.FC<CellProps> = ({
           <RenderShape color={color} shape={shape} />
         </FaceCard>
       ) : (
-        <FaceDown onClick={onClick} />
+        <FaceDown onClick={onClick}>
+          <Wrap>
+            <Text>TECHNIXO</Text>
+          </Wrap>
+        </FaceDown>
       )}
     </>
   );

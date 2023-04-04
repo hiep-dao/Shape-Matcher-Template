@@ -8,7 +8,7 @@ const App: React.FC = (): JSX.Element => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Shape Matcher</h1>
+        <h1 style={{width: '100%', textAlign: 'center'}}>Shape Matcher</h1>
       </header>
       <main>
         <Board />
