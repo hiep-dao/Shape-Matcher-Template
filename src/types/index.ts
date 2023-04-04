@@ -9,6 +9,7 @@ interface IShape {
   color: string;
   shape: Shape;
   isOpen: boolean;
+  value: number;
 }
 
 export { Shape };

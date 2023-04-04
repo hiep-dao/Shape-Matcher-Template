@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Cell from './Cell';
-import './Board.css';
+import React, { useRef, useState } from "react";
+import Cell from "./Cell";
+import "./Board.css";
 import styled from "styled-components";
-import renderShape from '../randomShapesData';
-import { IShape } from '../types';
+import { deepCloneArray, renderShape, shuffle } from "../randomShapesData";
+import { IShape } from "../types";
 
 const BoardCard = styled.div`
   margin-top: 50px;
@@ -15,39 +15,54 @@ const BoardCard = styled.div`
   margin: 0px auto;
 `;
 
-const shuffle = (array: IShape[]): IShape[] => {
-  let currentIndex = array.length,
-    randomIndex;
 
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
 
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
-};
+interface RevealedShape {
+  prevIndex: number;
+}
 
 const Board: React.FC = (): JSX.Element => {
   const [shapes, setShapes] = useState(() => {
     return shuffle(renderShape());
   });
-  // states...
-  useEffect(() => {
-    // Initialize the game board with random shapes and colors
-  }, []);
+  console.log(shapes);
+  const revealedShape = useRef<RevealedShape>({
+    prevIndex: -1,
+  });
+
+  const handleCheckCard = (cloneShapes: IShape[], currentIndex: number) => {
+    if (cloneShapes[currentIndex].value === cloneShapes[revealedShape.current.prevIndex].value) {
+      cloneShapes[currentIndex].isOpen = true;
+      cloneShapes[revealedShape.current.prevIndex].isOpen = true;
+      setShapes(cloneShapes);
+      revealedShape.current.prevIndex = -1;
+    } else {
+      cloneShapes[currentIndex].isOpen = true;
+      cloneShapes[revealedShape.current.prevIndex].isOpen = true;
+
+      const tempPrevIndex = revealedShape.current.prevIndex;
+      
+      setShapes([...cloneShapes]);
+
+      setTimeout(() => {
+        cloneShapes[currentIndex].isOpen = false;
+        cloneShapes[tempPrevIndex].isOpen = false;
+        revealedShape.current.prevIndex = -1;
+        setShapes([...cloneShapes]);
+      }, 300);
+    }
+  }
 
   const handleCellClick = (index: number) => {
-    const _shape = [...shapes];
-    _shape[index].isOpen = !_shape[index].isOpen;
-    setShapes(_shape);
+    const cloneShapes = deepCloneArray(shapes);
+
+    if (revealedShape.current.prevIndex === -1) {
+      cloneShapes[index].isOpen = true;
+      setShapes(cloneShapes);
+      revealedShape.current.prevIndex = index;
+    } else {
+      handleCheckCard(cloneShapes, index);
+    }
   };
 
   return (
@@ -66,4 +81,3 @@ const Board: React.FC = (): JSX.Element => {
 };
 
 export default Board;
-
